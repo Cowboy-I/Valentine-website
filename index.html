@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goofy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #333 url('texture.jpg') repeat; 
+            color: black; 
+        }
+
+        #nameContainer {
+            z-index: 1;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.9); 
+            padding: 20px;
+        }
+
+        input, button {
+            padding: 15px; 
+            font-size: 20px; 
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-top: 15px; 
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        #valentineContainer {
+            width: 405px;
+            color: white; /* Set text color to white */
+            display: none;
+            opacity: 0;
+        }
+
+        #valentineImage {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        #buttonContainer {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        #buttonContainer p {
+            font-size: 22px; 
+            margin-bottom: 15px; 
+            color: white; /* Set text color to white */
+        }
+
+        #buttonContainer button {
+            padding: 15px 30px; 
+            font-size: 22px; 
+            margin: 0 15px; 
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white; /* Set text color to white */
+        }
+    </style>
+    <script>
+        function showValentine() {
+            var name = document.getElementById("nameInput").value.trim();
+            if (name !== "") {
+                document.getElementById("nameContainer").style.opacity = 0;
+                setTimeout(() => {
+                    document.getElementById("nameContainer").style.display = "none";
+                    document.getElementById("valentineContainer").style.display = "block";
+                    document.getElementById("valentineContainer").style.opacity = 1;
+                }, 500);
+                sendPersonEnteredMessage(name);
+            } else {
+                alert("Please enter your name.");
+            }
+        }
+
+        function sendToDiscord(message) {
+            const webhookUrl = 'WEB_HOOK_URL';
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({content: message}),
+            })
+            .then(response => {
+                if (!response.ok) console.error('Failed to send message to Discord:', response.statusText);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function sendPersonEnteredMessage(name) {
+            const message = 'Person entered: ' + name;
+            sendToDiscord(message);
+        }
+
+        function sendResponse(response) {
+            var name = document.getElementById("nameInput").value.trim();
+            var message = name + ' clicked "' + response + '"';
+            sendToDiscord(message);
+            
+            if (response === 'Yes') {
+                window.location.href = 'yes-page.html'; // Replace with the desired HTML file for 'Yes'
+            } else if (response === 'No') {
+                window.location.href = 'redirect-page.html'; // Replace with the desired HTML file for 'No'
+            }
+        }
+    </script>
+</head>
+
+<body>
+
+    <div id="nameContainer">
+        <h2>Type your name!</h2>
+        <input type="text" id="nameInput" placeholder="Your Name">
+        <button onclick="showValentine()">Start</button>
+    </div>
+
+    <div id="valentineContainer">
+        <img id="valentineImage"
+            src="https://i.pinimg.com/originals/0f/2f/60/0f2f6019851d596cbf245565283b4027.jpg"
+            alt="Valentine Image">
+        <div id="buttonContainer">
+            <p>Do you want to be my valentine?</p>
+            <button onclick="sendResponse('Yes')">Yes</button>
+            <button onclick="sendResponse('No')">No</button>
+        </div>
+    </div>
+
+</body>
+
+</html>
